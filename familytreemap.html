@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+   integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+   crossorigin=""/>
+   
+    <!-- Make sure you put this AFTER Leaflet's CSS -->
+ <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+   integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+   crossorigin=""></script>
+
+
+</head>
+<body>
+    <div id="mapid" style="width: 600px; height: 400px;"></div>
+	
+	<!--voeg geojson met familiegegevens toe-->
+    <script src="familiedata.js" type="text/javascript"></script>
+
+	
+	
+	<script>
+	var mymap = L.map('mapid').setView([51, 3], 9);
+	
+	
+	
+	L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+    maxZoom: 18,
+    id: 'mapbox/streets-v11',
+    tileSize: 512,
+    zoomOffset: -1,
+    accessToken: 'pk.eyJ1IjoiZWRkYXV3ZSIsImEiOiJjaXhyaXkzaTAwMDJpMzNwYm9kNzBqdmZ2In0.xJLYRTqLMrWllResz6DxxQ'
+	}).addTo(mymap);
+
+
+
+	//features zullen popup krijgen bij inladen
+	function onEachFeature(feature, layer) {
+			var popupContent = feature.properties.naam
+
+			if (feature.properties && feature.properties.popupContent) {
+				popupContent += feature.properties.popupContent;
+			}
+			
+			
+
+				
+
+			
+			
+			
+			layer.bindPopup(popupContent);
+		}
+	//voeg geojson toe aan kaart
+	L.geoJSON(personen, {
+
+		style: function(feature) {
+			switch (feature.properties.familie) {
+            case 'Dauwe': return {fillColor: "#ff0000"};
+            case 'Dekeyser':   return {fillColor: "#0000ff"};}},
+
+		onEachFeature: onEachFeature,
+
+		pointToLayer: function (feature, latlng) {
+			return L.circleMarker(latlng, {
+				radius: 8,
+				color: "#000",
+				weight: 1,
+				opacity: 1,
+				fillOpacity: 0.8
+			});
+		}
+	}).addTo(mymap);
+	
+	//connect points
+    var features = personen.features;
+	c=[];
+    for (i = 0; i < features.length; i += 1) {
+        feature = features[i];
+		c=[]
+        // Make sure this feature is a point.
+        if (feature.geometry.type === "Point") {
+			x=feature.geometry.coordinates[0]
+			y=feature.geometry.coordinates[1]
+			coordinaten=[y,x]
+			c.push(coordinaten)
+            for (j=0; j<features.length; j+=1){
+				feature=features[j];
+				if (feature.geometry.type === "Point" && feature.geometry.coordinates[0]!= x || feature.geometry.coordinates[1]!= y){
+					x=feature.geometry.coordinates[0]
+					y=feature.geometry.coordinates[1]
+					coordinaten2=[y,x]
+					c.push(coordinaten2)
+					L.polyline(c,{color: 'red'}).addTo(mymap);
+					c=[coordinaten]
+				}
+			}
+        }
+    }
+
+
+
+
+
+
+	
+	
+
+
+</script>
+</body>
+</html>
