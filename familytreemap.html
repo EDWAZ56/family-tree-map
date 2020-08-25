@@ -10,11 +10,28 @@
  <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
    integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
    crossorigin=""></script>
+   
+ <!-- Make sure you put this AFtER leaflet.js, when using with leaflet -->
+ <script src="https://unpkg.com/leaflet-geosearch@3.0.0/dist/geosearch.umd.js"></script>
+ <script src="extra.js" type="text/javascript"></script>
+ 
+ <!--geosearch-->
+
+<!--geosearch css-->
+<link rel="stylesheet" href="node_modules/leaflet-geosearch/dist/geosearch.css">
+
+
 
 
 </head>
 <body>
     <div id="mapid" style="width: 600px; height: 400px;"></div>
+	<form>
+	  <input type="text"/>
+	</form>
+
+	
+	
 	
 	<!--voeg geojson met familiegegevens toe-->
     <script src="familiedata.js" type="text/javascript"></script>
@@ -22,6 +39,11 @@
 	
 	
 	<script>
+
+	
+	
+	
+	
 	var mymap = L.map('mapid').setView([51, 3], 9);
 	
 	
@@ -75,6 +97,9 @@
 		}
 	}).addTo(mymap);
 	
+	
+
+	
 	//connect points
     var features = personen.features;
 	c=[];
@@ -87,9 +112,10 @@
 			y=feature.geometry.coordinates[1]
 			coordinaten=[y,x]
 			c.push(coordinaten)
+			kinderen=feature.properties.kinderen
             for (j=0; j<features.length; j+=1){
 				feature=features[j];
-				if (feature.geometry.type === "Point" && feature.geometry.coordinates[0]!= x || feature.geometry.coordinates[1]!= y){
+				if (contains(kinderen,feature.properties.naam) && feature.geometry.type === "Point" && feature.geometry.coordinates!= [x,y]){
 					x=feature.geometry.coordinates[0]
 					y=feature.geometry.coordinates[1]
 					coordinaten2=[y,x]
@@ -102,10 +128,23 @@
     }
 
 
+// instead of import {} from 'leaflet-geosearch', use the `window` global
+var GeoSearchControl = window.GeoSearch.GeoSearchControl;
+var OpenStreetMapProvider = window.GeoSearch.OpenStreetMapProvider;
+
+const form = document.querySelector('form');
+const input = form.querySelector('input[type="text"]');
+
+// you want to get it of the window global
+const provider = new GeoSearch.OpenStreetMapProvider();
 
 
+form.addEventListener('submit', async (event) => {
+  event.preventDefault();
 
-
+  const results = await provider.search({ query: input.value });
+  console.log(results); // » [{}, {}, {}, ...]
+});
 	
 	
 

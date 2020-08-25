@@ -5,7 +5,8 @@ var personen={"type": "FeatureCollection",
         "naam": "Sasha Simonenko",
 		"familie": "Dauwe",
 		"kinderen":[],
-		"geslacht":"v"
+		"geslacht":"v",
+		"adres":"Gent"
     },
     "geometry": {
         "type": "Point",
@@ -15,7 +16,8 @@ var personen={"type": "FeatureCollection",
         "naam": "Eduard Dauwe",
 		"familie": "Dauwe",
 		"kinderen":["Sasha Simonenko"],
-		"geslacht":"m"
+		"geslacht":"m",
+		"adres":"Moskou"
     },
     "geometry": {
         "type": "Point",
@@ -26,7 +28,8 @@ var personen={"type": "FeatureCollection",
 	   "naam":"Thomas Dekeyser",
 	   "familie":"Dekeyser",
 	   "kinderen":[],
-	   "geslacht":"m"	   
+	   "geslacht":"m",
+		"adres":"Kruibeke"
    },
    "geometry":{
 	   "type":"Point",
