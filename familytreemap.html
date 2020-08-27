@@ -10,6 +10,9 @@
  <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
    integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
    crossorigin=""></script>
+ <script type = "text/javascript" 
+         src = "https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js">
+      </script>
    
  <!-- Make sure you put this AFtER leaflet.js, when using with leaflet -->
  <script src="https://unpkg.com/leaflet-geosearch@3.0.0/dist/geosearch.umd.js"></script>
@@ -59,73 +62,8 @@
 
 
 
-	//features zullen popup krijgen bij inladen
-	function onEachFeature(feature, layer) {
-			var popupContent = feature.properties.naam
-
-			if (feature.properties && feature.properties.popupContent) {
-				popupContent += feature.properties.popupContent;
-			}
-			
-			
-
-				
-
-			
-			
-			
-			layer.bindPopup(popupContent);
-		}
-	//voeg geojson toe aan kaart
-	L.geoJSON(personen, {
-
-		style: function(feature) {
-			switch (feature.properties.familie) {
-            case 'Dauwe': return {fillColor: "#ff0000"};
-            case 'Dekeyser':   return {fillColor: "#0000ff"};}},
-
-		onEachFeature: onEachFeature,
-
-		pointToLayer: function (feature, latlng) {
-			return L.circleMarker(latlng, {
-				radius: 8,
-				color: "#000",
-				weight: 1,
-				opacity: 1,
-				fillOpacity: 0.8
-			});
-		}
-	}).addTo(mymap);
-	
-	
 
 	
-	//connect points
-    var features = personen.features;
-	c=[];
-    for (i = 0; i < features.length; i += 1) {
-        feature = features[i];
-		c=[]
-        // Make sure this feature is a point.
-        if (feature.geometry.type === "Point") {
-			x=feature.geometry.coordinates[0]
-			y=feature.geometry.coordinates[1]
-			coordinaten=[y,x]
-			c.push(coordinaten)
-			kinderen=feature.properties.kinderen
-            for (j=0; j<features.length; j+=1){
-				feature=features[j];
-				if (contains(kinderen,feature.properties.naam) && feature.geometry.type === "Point" && feature.geometry.coordinates!= [x,y]){
-					x=feature.geometry.coordinates[0]
-					y=feature.geometry.coordinates[1]
-					coordinaten2=[y,x]
-					c.push(coordinaten2)
-					L.polyline(c,{color: 'red'}).addTo(mymap);
-					c=[coordinaten]
-				}
-			}
-        }
-    }
 
 
 // instead of import {} from 'leaflet-geosearch', use the `window` global
@@ -138,13 +76,108 @@ const input = form.querySelector('input[type="text"]');
 // you want to get it of the window global
 const provider = new GeoSearch.OpenStreetMapProvider();
 
+/*
+var features = personen.features;
+for (i = 0; i < features.length; i += 1) {
+	var resultaat=[]
+	feature=features[i];
+	resultaat= provider.search({ query:feature.properties.adres }).then(function(result){
+		var label = result[i].label;
+		var marker=L.marker([result[0].y, result[0].x]).addTo(mymap); // » [{}, {}, {}, ...]
+	    //feature.geometry.coordinates.push([result[0].y, result[0].x])
+		marker.bindPopup("<b>Found location</b><br>"+label).openPopup();
+	})
+	}
 
-form.addEventListener('submit', async (event) => {
-  event.preventDefault();
+*/
 
-  const results = await provider.search({ query: input.value });
-  console.log(results); // » [{}, {}, {}, ...]
-});
+
+
+
+
+
+var features = personen.features;
+for (i = 0; i < features.length; i += 1) {
+	feature=features[i];
+	var co=[];
+	//leaflet en nominatim
+	$.ajax({
+        url: 'http://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + feature.properties.adres,
+        async: false,
+        dataType: 'json',
+        success: function(data) {
+			co=[data[0].lat, data[0].lon];
+			coyx=[data[0].lon, data[0].lat];
+        }
+    });
+	
+	marker=L.marker(co).addTo(mymap);
+	marker.bindPopup(feature.properties.naam);
+	feature.geometry.coordinates=(coyx)
+
+	}
+	
+	
+
+
+
+
+
+
+
+
+//voeg geojson toe aan kaart
+L.geoJSON(personen, {
+
+	style: function(feature) {
+		switch (feature.properties.familie) {
+		case 'Dauwe': return {fillColor: "#ff0000"};
+		case 'Dekeyser':   return {fillColor: "#0000ff"};}},
+
+	onEachFeature: onEachFeature,
+
+	pointToLayer: function (feature, latlng) {
+		return L.circleMarker(latlng, {
+			radius: 8,
+			color: "#000",
+			weight: 1,
+			opacity: 1,
+			fillOpacity: 0.8
+		});
+	}
+}).addTo(mymap);
+
+
+
+
+//connect points
+var features = personen.features;
+c=[];
+for (i = 0; i < features.length; i += 1) {
+	feature = features[i];
+	c=[]
+	// Make sure this feature is a point.
+	if (feature.geometry.type === "Point") {
+		x=feature.geometry.coordinates[0]
+		y=feature.geometry.coordinates[1]
+		coordinaten=[y,x]
+		c.push(coordinaten)
+		kinderen=feature.properties.kinderen
+		for (j=0; j<features.length; j+=1){
+			feature=features[j];
+			if (contains(kinderen,feature.properties.naam) && feature.geometry.type === "Point" && feature.geometry.coordinates!= [x,y]){
+				x=feature.geometry.coordinates[0]
+				y=feature.geometry.coordinates[1]
+				coordinaten2=[y,x]
+				c.push(coordinaten2)
+				L.polyline(c,{color: 'red'}).addTo(mymap);
+				c=[coordinaten]
+			}
+		}
+	}
+}
+
+
 	
 	
 

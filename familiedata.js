@@ -10,7 +10,7 @@ var personen={"type": "FeatureCollection",
     },
     "geometry": {
         "type": "Point",
-  "coordinates": [3,51]}},
+  "coordinates": []}},
    {"type":"Feature",
     "properties": {
         "naam": "Eduard Dauwe",
@@ -21,7 +21,7 @@ var personen={"type": "FeatureCollection",
     },
     "geometry": {
         "type": "Point",
-   "coordinates": [2,51]}
+   "coordinates": []}
    },
    {"type":"Feature",
    "properties":{
@@ -33,7 +33,7 @@ var personen={"type": "FeatureCollection",
    },
    "geometry":{
 	   "type":"Point",
-	   "coordinates":[2.5,50.5]
+	   "coordinates":[]
    }
    } 
 ]

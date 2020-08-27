@@ -7,3 +7,24 @@ function contains(a, obj) {
 	}
 	return false;
 }
+
+
+
+
+//features zullen popup krijgen bij inladen
+function onEachFeature(feature, layer) {
+		var popupContent = feature.properties.naam
+
+		if (feature.properties && feature.properties.popupContent) {
+			popupContent += feature.properties.popupContent;
+		}
+		
+		
+
+			
+
+		
+		
+		
+		layer.bindPopup(popupContent);
+	}
