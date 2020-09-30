@@ -18,6 +18,9 @@
  <script src="https://unpkg.com/leaflet-geosearch@3.0.0/dist/geosearch.umd.js"></script>
  <script src="extra.js" type="text/javascript"></script>
  
+ 
+<!-- Tabletop -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tabletop.js/1.5.1/tabletop.js"></script>
  <!--geosearch-->
 
 <!--geosearch css-->
@@ -96,27 +99,53 @@ for (i = 0; i < features.length; i += 1) {
 
 
 //laad google sheet gegevens
-  $.ajax({
-       url:'csv/Options.csv',
-       type:'HEAD',
-       error: function() {
-         // Options.csv does not exist, so use Tabletop to fetch data from
-         // the Google sheet
-         mapData = Tabletop.init({
-           key: googleDocURL,
-           callback: function(data, mapData) { onMapDataLoad(); }
-         });
-       },
-       success: function() {
-         // Get all data from .csv files
-         mapData = Procsv;
-         mapData.load({
-           self: mapData,
-           tabs: ['Options','Polygons', 'Polylines'],
-           callback: onMapDataLoad
-         });
-       }
-   });
+/*$.ajax({
+   url:'csv/Options.csv',
+   type:'HEAD',
+   error: function() {
+	 // Options.csv does not exist, so use Tabletop to fetch data from
+	 // the Google sheet
+	 mapData = Tabletop.init({
+	   key: googleDocURL,
+	   callback: function(data, mapData) { onMapDataLoad(); }
+	 });
+   },
+   success: function() {
+	 // Get all data from .csv files
+	 mapData = Procsv;
+	 mapData.load({
+	   self: mapData,
+	   tabs: ['Options','Polygons', 'Polylines'],
+	   callback: onMapDataLoad
+	 });
+   }
+});*/
+
+var httpRequest;
+
+function makeRequest(){
+	httpRequest= new XMLHttpRequest();
+	if (!httpRequest) {
+      alert('Giving up :( Cannot create an XMLHTTP instance');
+      return false;
+    }
+    httpRequest.onreadystatechange = leesGoogleSheet;
+    httpRequest.open('GET', googleDocURL);
+    httpRequest.send();
+  }
+	
+function leesGoogleSheet(){
+	if (httpRequest.readyState === XMLHttpRequest.DONE) {
+	  if (httpRequest.status === 200) {
+		alert(httpRequest.responseText);
+	  } else {
+		alert('There was a problem with the request.');
+	  }
+	}
+}
+	
+
+makeRequest();
 
 
 
