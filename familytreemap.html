@@ -81,46 +81,11 @@ const input = form.querySelector('input[type="text"]');
 // you want to get it of the window global
 const provider = new GeoSearch.OpenStreetMapProvider();
 
-/*
-var features = personen.features;
-for (i = 0; i < features.length; i += 1) {
-	var resultaat=[]
-	feature=features[i];
-	resultaat= provider.search({ query:feature.properties.adres }).then(function(result){
-		var label = result[i].label;
-		var marker=L.marker([result[0].y, result[0].x]).addTo(mymap); // » [{}, {}, {}, ...]
-	    //feature.geometry.coordinates.push([result[0].y, result[0].x])
-		marker.bindPopup("<b>Found location</b><br>"+label).openPopup();
-	})
-	}
-
-*/
 
 
 
-//laad google sheet gegevens
-/*$.ajax({
-   url:'csv/Options.csv',
-   type:'HEAD',
-   error: function() {
-	 // Options.csv does not exist, so use Tabletop to fetch data from
-	 // the Google sheet
-	 mapData = Tabletop.init({
-	   key: googleDocURL,
-	   callback: function(data, mapData) { onMapDataLoad(); }
-	 });
-   },
-   success: function() {
-	 // Get all data from .csv files
-	 mapData = Procsv;
-	 mapData.load({
-	   self: mapData,
-	   tabs: ['Options','Polygons', 'Polylines'],
-	   callback: onMapDataLoad
-	 });
-   }
-});*/
 
+//maak request om punten te lezen en definieren als layers in csv bestand
 var httpRequest;
 
 function makeRequest(){
@@ -136,8 +101,17 @@ function makeRequest(){
 	
 function leesGoogleSheet(){
 	if (httpRequest.readyState === XMLHttpRequest.DONE) {
-	  if (httpRequest.status === 200) {
+	  if (httpRequest.status === 200 || httpRequest.status == 0) {
 		alert(httpRequest.responseText);
+		//definieer punten uit csv bestand om verder mee te werken
+		csv=httpRequest.responseText;
+		lines=csv.split('\n');
+		for(i = 0; i < lines.length; i++){ 
+			naam=lines[i].split(',')[0]
+			x=lines[i].split(',')[1]
+			y=lines[i].split(',')[2]
+            console.log("naam: " + naam + "x: "+x+"y: "+y); 
+        }		
 	  } else {
 		alert('There was a problem with the request.');
 	  }
