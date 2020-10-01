@@ -130,7 +130,7 @@ function makeRequest(){
       return false;
     }
     httpRequest.onreadystatechange = leesGoogleSheet;
-    httpRequest.open('GET', googleDocURL);
+    httpRequest.open('GET', googleDocURLlocal);
     httpRequest.send();
   }
 	
@@ -157,7 +157,7 @@ for (i = 0; i < features.length; i += 1) {
 	var co=[];
 	//leaflet en nominatim
 	$.ajax({
-        url: 'http://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + feature.properties.adres,
+        url: 'https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + feature.properties.adres,
         async: false,
         dataType: 'json',
         success: function(data) {
