@@ -135,9 +135,8 @@ makeRequest();
 
 
 
-for (i = 0; i < adreslist.; i += 1) {
+for (i = 0; i < adreslist; i += 1) {
 	adres=adreslist[i];
-
 	//leaflet en nominatim
 	$.ajax({
         url: 'https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + adres,
@@ -148,11 +147,9 @@ for (i = 0; i < adreslist.; i += 1) {
 			coyx=[data[0].lon, data[0].lat];
         }
     });
-	
 	marker=L.marker(co).addTo(mymap);
 	marker.bindPopup(naamlist[i]);
-	co[i]=(coyx)
-
+	co[i]=(coyx);
 	}
 	
 	
