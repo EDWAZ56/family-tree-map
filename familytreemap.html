@@ -119,8 +119,9 @@ function leesGoogleSheet(){
 			addPoints(adres,naam);
         }
 		//verbind de punten
-		map.eachLayer(function(layer){		
+		mymap.eachLayer(function(layer){		
 			console.log(layer);
+			
 		});
 	  } else {
 		alert('There was a problem with the request.');
