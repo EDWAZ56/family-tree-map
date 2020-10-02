@@ -87,6 +87,11 @@ const provider = new GeoSearch.OpenStreetMapProvider();
 
 //maak request om punten te lezen en definieren als layers in csv bestand
 var httpRequest;
+var naamlist=[];
+var adreslist=[];
+var kinderlist=[];
+//sla coordinaten van adressen op om punten te verbinden
+var co=[];
 
 function makeRequest(){
 	httpRequest= new XMLHttpRequest();
@@ -107,10 +112,15 @@ function leesGoogleSheet(){
 		csv=httpRequest.responseText;
 		lines=csv.split('\n');
 		for(i = 0; i < lines.length; i++){ 
-			naam=lines[i].split(',')[0]
-			x=lines[i].split(',')[1]
-			y=lines[i].split(',')[2]
-            console.log("naam: " + naam + "x: "+x+"y: "+y); 
+			naam=lines[i].split(';')[0]
+			adres=lines[i].split(';')[1]
+			kind=lines[i].split(';')[2]
+            console.log("naam: " + naam + " adres: "+adres + " kind: "+kind); 
+			//voeg naam toe aan naamlijst
+			naamlist.push(naam);
+			//voeg adres toe aan adressenlijst
+			adreslist.push(adres);
+			kinderlist.push(kind);
         }		
 	  } else {
 		alert('There was a problem with the request.');
@@ -125,13 +135,12 @@ makeRequest();
 
 
 
-var features = personen.features;
-for (i = 0; i < features.length; i += 1) {
-	feature=features[i];
-	var co=[];
+for (i = 0; i < adreslist.; i += 1) {
+	adres=adreslist[i];
+
 	//leaflet en nominatim
 	$.ajax({
-        url: 'https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + feature.properties.adres,
+        url: 'https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + adres,
         async: false,
         dataType: 'json',
         success: function(data) {
@@ -141,8 +150,8 @@ for (i = 0; i < features.length; i += 1) {
     });
 	
 	marker=L.marker(co).addTo(mymap);
-	marker.bindPopup(feature.properties.naam);
-	feature.geometry.coordinates=(coyx)
+	marker.bindPopup(naamlist[i]);
+	co[i]=(coyx)
 
 	}
 	
@@ -156,7 +165,7 @@ for (i = 0; i < features.length; i += 1) {
 
 
 //voeg geojson toe aan kaart
-L.geoJSON(personen, {
+/*L.geoJSON(personen, {
 
 	style: function(feature) {
 		switch (feature.properties.familie) {
@@ -174,35 +183,31 @@ L.geoJSON(personen, {
 			fillOpacity: 0.8
 		});
 	}
-}).addTo(mymap);
+}).addTo(mymap);*/
 
 
 
 
 //connect points
-var features = personen.features;
 c=[];
-for (i = 0; i < features.length; i += 1) {
-	feature = features[i];
+for (i = 0; i < naamlist.length; i += 1) {
+	lon = co[i][0];
+	lat=co[i][1];
+	kind=kinderlist[i];
 	c=[]
 	// Make sure this feature is a point.
-	if (feature.geometry.type === "Point") {
-		x=feature.geometry.coordinates[0]
-		y=feature.geometry.coordinates[1]
-		coordinaten=[y,x]
-		c.push(coordinaten)
-		kinderen=feature.properties.kinderen
-		for (j=0; j<features.length; j+=1){
-			feature=features[j];
-			if (contains(kinderen,feature.properties.naam) && feature.geometry.type === "Point" && feature.geometry.coordinates!= [x,y]){
-				x=feature.geometry.coordinates[0]
-				y=feature.geometry.coordinates[1]
-				coordinaten2=[y,x]
-				c.push(coordinaten2)
-				L.polyline(c,{color: 'red'}).addTo(mymap);
-				c=[coordinaten]
-			}
+	coordinaten=[lat,lon]
+	c.push(coordinaten)
+	if (kind != ""){
+	for (j=0; j<naamlist.length; j+=1){
+		naam=naamlist[j];
+		coordinaten2=[co[j][1],co[j][0]];
+		if (contains(kind,naam) && coordinaten2!= [lat,lon]){
+			c.push(coordinaten2)
+			L.polyline(c,{color: 'red'}).addTo(mymap);
+			c=[coordinaten];
 		}
+	}
 	}
 }
 

@@ -1,4 +1,4 @@
-naam,x,y
-alexandra dauwe,50,3
-eduard dauwe,50,4
-thomas dekeyser,51,3
+naam;adres;kinderen
+alexandra simonenko;gent;
+eduard dauwe;moskou;alexandra simonenko
+thomas dekeyser;aartselaar;
