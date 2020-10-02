@@ -113,16 +113,36 @@ function leesGoogleSheet(){
 		lines=csv.split('\n');
 		for(i = 0; i < lines.length; i++){ 
 			naam=lines[i].split(';')[0];
+			naamlist.push(naam);
 			adres=lines[i].split(';')[1];
 			kind=lines[i].split(';')[2];
+			kinderlist.push(kind);
             console.log("naam: " + naam + " adres: "+adres + " kind: "+kind); 
 			addPoints(adres,naam);
         }
 		//verbind de punten
-		mymap.eachLayer(function(layer){		
-			console.log(layer);
-			
-		});
+		//connect points
+		c=[];
+		for (i = 0; i < naamlist.length; i += 1) {
+		lon = co[i][0];
+		lat=co[i][1];
+		kind=kinderlist[i];
+		c=[]
+		// Make sure this feature is a point.
+		coordinaten=[lat,lon]
+		c.push(coordinaten)
+		if (kind != ""){
+		for (j=0; j<naamlist.length; j+=1){
+			naam=naamlist[j];
+			coordinaten2=[co[j][1],co[j][0]];
+			if (contains(kind,naam) && coordinaten2!= [lat,lon]){
+				c.push(coordinaten2)
+				L.polyline(c,{color: 'red'}).addTo(mymap);
+				c=[coordinaten];
+			}
+		}
+		}
+		}
 	  } else {
 		alert('There was a problem with the request.');
 	  }
@@ -182,28 +202,7 @@ function addPoints(adres,naam){
 
 
 
-//connect points
-c=[];
-for (i = 0; i < naamlist.length; i += 1) {
-	lon = co[i][0];
-	lat=co[i][1];
-	kind=kinderlist[i];
-	c=[]
-	// Make sure this feature is a point.
-	coordinaten=[lat,lon]
-	c.push(coordinaten)
-	if (kind != ""){
-	for (j=0; j<naamlist.length; j+=1){
-		naam=naamlist[j];
-		coordinaten2=[co[j][1],co[j][0]];
-		if (contains(kind,naam) && coordinaten2!= [lat,lon]){
-			c.push(coordinaten2)
-			L.polyline(c,{color: 'red'}).addTo(mymap);
-			c=[coordinaten];
-		}
-	}
-	}
-}
+
 
 
 	
