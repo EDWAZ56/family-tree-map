@@ -91,7 +91,7 @@ var naamlist=[];
 var adreslist=[];
 var kinderlist=[];
 //sla coordinaten van adressen op om punten te verbinden
-var co=[];
+var cor=[];
 
 function makeRequest(){
 	httpRequest= new XMLHttpRequest();
@@ -119,13 +119,15 @@ function leesGoogleSheet(){
 			kinderlist.push(kind);
             console.log("naam: " + naam + " adres: "+adres + " kind: "+kind); 
 			addPoints(adres,naam);
+			//voeg coordinaten van marker toe aan lijst om hierna lijnen te kunnen definieren
+			cor.push(coyx);
         }
 		//verbind de punten
 		//connect points
 		c=[];
 		for (i = 0; i < naamlist.length; i += 1) {
-		lon = co[i][0];
-		lat=co[i][1];
+		lon = cor[i][0];
+		lat=cor[i][1];
 		kind=kinderlist[i];
 		c=[]
 		// Make sure this feature is a point.
@@ -134,7 +136,7 @@ function leesGoogleSheet(){
 		if (kind != ""){
 		for (j=0; j<naamlist.length; j+=1){
 			naam=naamlist[j];
-			coordinaten2=[co[j][1],co[j][0]];
+			coordinaten2=[cor[j][1],cor[j][0]];
 			if (contains(kind,naam) && coordinaten2!= [lat,lon]){
 				c.push(coordinaten2)
 				L.polyline(c,{color: 'red'}).addTo(mymap);
@@ -167,7 +169,6 @@ function addPoints(adres,naam){
     });
 	marker=L.marker(co).addTo(mymap);
 	marker.bindPopup(naam);
-	co[i]=(coyx);
 	}
 	
 
