@@ -137,7 +137,7 @@ function leesGoogleSheet(){
 		for (j=0; j<naamlist.length; j+=1){
 			naam=naamlist[j];
 			coordinaten2=[cor[j][1],cor[j][0]];
-			if (contains(kind,naam) && coordinaten2!= [lat,lon]){
+			if (contains(kind,naam) && coordinaten2 != [lat,lon]){
 				c.push(coordinaten2)
 				L.polyline(c,{color: 'red'}).addTo(mymap);
 				c=[coordinaten];
