@@ -113,12 +113,15 @@ function leesGoogleSheet(){
 		lines=csv.split('\n');
 		for(i = 0; i < lines.length; i++){ 
 			naam=lines[i].split(';')[0];
-			naamlist.push(naam);
 			adres=lines[i].split(';')[1];
 			kind=lines[i].split(';')[2];
             console.log("naam: " + naam + " adres: "+adres + " kind: "+kind); 
 			addPoints(adres,naam);
-        }		
+        }
+		//verbind de punten
+		map.eachLayer(function(layer){		
+			console.log(layer);
+		}
 	  } else {
 		alert('There was a problem with the request.');
 	  }
