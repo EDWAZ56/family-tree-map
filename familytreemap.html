@@ -100,7 +100,6 @@ function makeRequest(){
       return false;
     }
     httpRequest.onreadystatechange = leesGoogleSheet;
-	procData();
     httpRequest.open('GET', googleDocURLlocal);
     httpRequest.send();
   }
@@ -113,15 +112,12 @@ function leesGoogleSheet(){
 		csv=httpRequest.responseText;
 		lines=csv.split('\n');
 		for(i = 0; i < lines.length; i++){ 
-			naam=lines[i].split(';')[0]
-			adres=lines[i].split(';')[1]
-			kind=lines[i].split(';')[2]
-            console.log("naam: " + naam + " adres: "+adres + " kind: "+kind); 
-			//voeg naam toe aan naamlijst
+			naam=lines[i].split(';')[0];
 			naamlist.push(naam);
-			//voeg adres toe aan adressenlijst
-			adreslist.push(adres);
-			kinderlist.push(kind);
+			adres=lines[i].split(';')[1];
+			kind=lines[i].split(';')[2];
+            console.log("naam: " + naam + " adres: "+adres + " kind: "+kind); 
+			addPoints(adres,naam);
         }		
 	  } else {
 		alert('There was a problem with the request.');
@@ -135,10 +131,7 @@ makeRequest();
 
 
 
-function procData(){
-for (i = 0; i < adreslist; i += 1) {
-	adres=adreslist[i];
-	//leaflet en nominatim
+function addPoints(adres,naam){
 	$.ajax({
         url: 'https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + adres,
         async: false,
@@ -149,10 +142,9 @@ for (i = 0; i < adreslist; i += 1) {
         }
     });
 	marker=L.marker(co).addTo(mymap);
-	marker.bindPopup(naamlist[i]);
+	marker.bindPopup(naam);
 	co[i]=(coyx);
 	}
-	
 	
 
 
@@ -209,7 +201,7 @@ for (i = 0; i < naamlist.length; i += 1) {
 	}
 }
 
-}
+
 	
 
 
